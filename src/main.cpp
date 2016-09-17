@@ -6,6 +6,7 @@
 #include "cor.hpp"
 #include "filtro.hpp"
 #include "filtronegativo.hpp"
+#include "filtropolarizado.hpp"
 #include <list>
 
 using namespace std;
@@ -18,7 +19,7 @@ int main(){
 
 	imagem->imprimirDados();
 
-	Filtro * filtro = new FiltroNegativo();
+	Filtro * filtro = new FiltroPolarizado();
 	
 	imagem->setCores(filtro->aplicarFiltro(imagem));
 
