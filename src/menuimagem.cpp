@@ -3,6 +3,31 @@
 #include "filtropolarizado.hpp"
 #include "filtropretobranco.hpp"
 #include "filtrodemedia.hpp"
+#include <sstream>
+
+using namespace std;
+
+int MenuImagem::le_teclado_int() {       
+	string input = "";    
+	int valor;    
+	while (true) {         
+		cin >> input;       
+		stringstream myStream(input);       
+		if (myStream >> valor)         
+			break;       
+		cout << "Inteiro inválido! Digite novamente: ";     
+	}     
+	return valor;
+}
+
+int MenuImagem::isOpcao(int opcao){
+	while(opcao < 1 || opcao > 4){
+		cout << "Opção Inválida. Digite novamente: ";
+		opcao = le_teclado_int();
+	}
+
+	return opcao;
+}
 
 Filtro * MenuImagem::lerOpcaoFiltro(){
 	int opcao;
@@ -14,7 +39,8 @@ Filtro * MenuImagem::lerOpcaoFiltro(){
 	cout << endl;
 	cout << "------------------------------------------------------------------------------------------" << endl;
 	cout << "Digite a opção: ";
-	cin >> opcao;
+	
+	opcao = isOpcao(le_teclado_int());
 
 	switch(opcao){
 		case 1 : 
