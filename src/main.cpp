@@ -7,6 +7,9 @@
 #include "filtro.hpp"
 #include "filtronegativo.hpp"
 #include "filtropolarizado.hpp"
+#include "filtropretobranco.hpp"
+#include "filtrodemedia.hpp"
+#include "menuimagem.hpp"
 #include <list>
 
 using namespace std;
@@ -16,10 +19,12 @@ int main(){
 	Imagem *imagem = new Imagem();
 
 	imagem->lerImagem();
-
+	
 	imagem->imprimirDados();
 
-	Filtro * filtro = new FiltroPolarizado();
+	MenuImagem menu;
+
+	Filtro * filtro = menu.lerOpcaoFiltro();
 	
 	imagem->setCores(filtro->aplicarFiltro(imagem));
 

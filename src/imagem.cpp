@@ -1,5 +1,6 @@
 #include "imagem.hpp"
 #include "cor.hpp"
+#include <sstream>
 
 using namespace std;
 
@@ -7,7 +8,7 @@ Imagem::Imagem(){
 
 }
 
-Imagem::Imagem(string formato, int altura, int largura, int escalaMaxima, list<Cor> cores){
+Imagem::Imagem(string formato, int altura, int largura, unsigned char escalaMaxima, list<Cor> cores){
 	this->formato = formato;
 	this->altura = altura;
 	this->largura = largura;
@@ -39,12 +40,20 @@ void Imagem::setLargura(int largura){
 	this->largura = largura;
 }
 
-int Imagem::getEscalaMaxima(){
+unsigned char Imagem::getEscalaMaxima(){
 	return escalaMaxima;
 }
 
-void Imagem::setEscalaMaxima(int escalaMaxima){
+void Imagem::setEscalaMaxima(unsigned char escalaMaxima){
 	this->escalaMaxima = escalaMaxima;
+}
+
+void Imagem::setUrlEndereco(string urlEndereco){
+	this->urlEndereco = urlEndereco;
+}
+
+string Imagem::getUrlEndereco(){
+	return urlEndereco;
 }
 
 list<Cor> Imagem::getCores(){
@@ -61,30 +70,88 @@ void Imagem::lerImagem(){
 
 	ValidacaoArquivo va;
 
-	va.validarArquivo(&arquivo);
+	setUrlEndereco(va.validarArquivo(&arquivo));
+
+	arquivo.seekg(lerCabecalho(),ios_base::cur);
+
+	setCores(lerCores(&arquivo));
+	arquivo.close();
+}
+
+int Imagem::lerCabecalho(){
+
+	ifstream arquivo;
+	arquivo.open(getUrlEndereco().c_str());
+	ValidacaoArquivo va;
+	va.ignorarComentario(&arquivo);
+
+	setFormato(getDado(&arquivo));
 
 	va.ignorarComentario(&arquivo);
 
-	(arquivo) >> formato;
+	int altura, largura;
+	istringstream * iss = new istringstream();
+	iss->str(getDado(&arquivo));
+	(*iss) >> altura >> largura;
+	setAltura(altura);
+	setLargura(largura);
 
 	va.ignorarComentario(&arquivo);
-
-	(arquivo) >> altura >> largura;
+	
+	int escala;
+	iss = new istringstream();
+	iss->str(getDado(&arquivo));
+	(*iss) >> escala;
+	setEscalaMaxima(escala);
 
 	va.ignorarComentario(&arquivo);
-
-	(arquivo) >> escalaMaxima;
-
-	int R, G, B;
-	Cor * cor;
-	while(!arquivo.eof()){
-		//va.ignorarComentario(&arquivo);
-		arquivo >> R >> G >> B;
-		cor = new Cor(R,G,B);
-		cores.push_back(*cor);
-	}	
+	int posicao = arquivo.tellg();
 
 	arquivo.close();
+	return posicao;
+}
+
+int Imagem::getTamanhoCabecalho(){
+
+	ifstream arquivo;
+	arquivo.open(getUrlEndereco().c_str());
+	ValidacaoArquivo va;
+	va.ignorarComentario(&arquivo);
+
+	getDado(&arquivo);
+
+	va.ignorarComentario(&arquivo);
+	
+	getDado(&arquivo);
+
+	va.ignorarComentario(&arquivo);
+	
+	getDado(&arquivo);
+
+	va.ignorarComentario(&arquivo);
+	
+	int tam = arquivo.tellg();
+
+	arquivo.close();
+
+	return tam - 1;
+}
+
+list<Cor> Imagem::lerCores(ifstream * arquivo){
+	Cor cor;
+	list<Cor> cores;
+	while(!arquivo->eof()){
+		unsigned char dado = arquivo->get();
+		cor.setR(dado);
+		dado = arquivo->get();
+		cor.setG(dado);
+		dado = arquivo->get();
+		cor.setB(dado);
+
+		cores.push_back(cor);
+	}
+
+	return cores;
 }
 
 void Imagem::gravarImagem(){
@@ -93,20 +160,48 @@ void Imagem::gravarImagem(){
 	ValidacaoArquivo va;
 	va.validarNovoArquivo(&arquivoImagem);
 
-	arquivoImagem << getFormato() << endl;
-	arquivoImagem << getAltura() << " " << getLargura() << endl;
-	arquivoImagem << getEscalaMaxima() << endl;
-
+	int tam = getTamanhoCabecalho();
+	ifstream arquivo;
+	arquivo.open(getUrlEndereco().c_str());
+	while(arquivo.tellg() <= tam)
+		arquivoImagem.put((unsigned char) arquivo.get());
+	arquivo.close();
+	
 	for(Cor cor : getCores()){
-		arquivoImagem << cor.getR() << "\t" << cor.getG() << "\t" << cor.getB() << endl;
+		
+		arquivoImagem.put(cor.getR());
+		
+		arquivoImagem.put(cor.getG());
+		
+		arquivoImagem.put(cor.getB());
+		
 	}
-
+	
 	arquivoImagem.close();
-
-	cout << "Nova imagem criada com sucesso! " << endl;
+	cout << endl;
+	cout << "\t\t\tNova imagem criada com sucesso! " << endl;
+	cout << endl;
 }
 
 void Imagem::imprimirDados(){
-	cout << "Formato: " << getFormato() << "\t" << "Dimensão: " << getAltura() << " X " << getLargura() << "\t" 
-		<< "Escala Máxima: " << getEscalaMaxima() << endl;
+	cout << endl;
+	cout << "-------------------------------------- CABEÇALHO -----------------------------------------" << endl;
+	cout << endl;
+	cout << "Formato: " << getFormato() << "\t\t\t" << "Dimensão: " << getAltura() << " X " << getLargura() << "\t\t\t" 
+		<< "Escala Máxima: ";
+		printf("%d", getEscalaMaxima());
+	cout << endl;
+	cout << endl;
+	cout << "------------------------------------------------------------------------------------------" << endl;
+	cout << endl;
+}
+
+string Imagem::getDado(ifstream * arquivo){
+	unsigned char byte;
+	string dado;
+	while((byte=arquivo->get()) != '\n'){
+		dado += byte;
+	}
+
+	return dado;
 }

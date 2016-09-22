@@ -4,29 +4,29 @@ Cor::Cor(){
 
 }
 
-Cor::Cor(int R, int G, int B){
+Cor::Cor(unsigned char R, unsigned char G, unsigned char B){
 	this->R = R;
 	this->G = G;
 	this->B = B;
 }
 
-int Cor::getR(){
+unsigned char Cor::getR(){
 	return R;
 }
-int Cor::getG(){
+unsigned char Cor::getG(){
 	return G;
 }
-int Cor::getB(){
+unsigned char Cor::getB(){
 	return B;
 }
 
 
-void Cor::setR(int R){
+void Cor::setR(unsigned char R){
 	this->R = R;
 }
-void Cor::setG(int G){
+void Cor::setG(unsigned char G){
 	this->G = G;
 }
-void Cor::setB(int B){
+void Cor::setB(unsigned char B){
 	this->B = B;
 }

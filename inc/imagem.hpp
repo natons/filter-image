@@ -16,13 +16,14 @@ private:
 		string formato;
 		int altura;
 		int largura;
-		int escalaMaxima;
+		unsigned char escalaMaxima;
+		string urlEndereco;
 		list<Cor> cores;
 
 public:
 		Imagem();
 
-		Imagem(string formato, int altura, int largura, int escalaMaxima, list<Cor> cores);
+		Imagem(string formato, int altura, int largura, unsigned char escalaMaxima, list<Cor> cores);
 		
 		string getFormato();
 
@@ -36,19 +37,31 @@ public:
 
 		void setLargura(int largura);
 
-		int getEscalaMaxima();
+		unsigned char getEscalaMaxima();
 
-		void setEscalaMaxima(int escalaMaxima);
+		void setEscalaMaxima(unsigned char escalaMaxima);
+
+		void setUrlEndereco(string urlEndereco);
+
+		string getUrlEndereco();
 
 		list<Cor> getCores();
 		
 		void setCores(list<Cor> cores);
+
+		int lerCabecalho();
+
+		int getTamanhoCabecalho();
+
+		list<Cor> lerCores(ifstream * arquivo);
 
 		void lerImagem();
 
 		void gravarImagem();
 
 		void imprimirDados();
+
+		string getDado(ifstream * arquivo);
 };
 
 #endif

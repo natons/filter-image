@@ -6,21 +6,21 @@
 class Cor {
 
 private:
-	int R;
-	int G;
-	int B;
+	unsigned char R;
+	unsigned char G;
+	unsigned char B;
 
 public:
 	Cor();
-	Cor(int R, int G, int B);
+	Cor(unsigned char R, unsigned char G, unsigned char B);
 
-	int getR();
-	int getG();
-	int getB();
+	unsigned char getR();
+	unsigned char getG();
+	unsigned char getB();
 
-	void setR(int R);
-	void setG(int G);
-	void setB(int B);
+	void setR(unsigned char R);
+	void setG(unsigned char G);
+	void setB(unsigned char B);
 
 };
 
