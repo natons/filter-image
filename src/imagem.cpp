@@ -92,7 +92,7 @@ int Imagem::lerCabecalho(){
 	int altura, largura;
 	istringstream * iss = new istringstream();
 	iss->str(getDado(&arquivo));
-	(*iss) >> altura >> largura;
+	(*iss) >> largura >> altura;
 	setAltura(altura);
 	setLargura(largura);
 
@@ -187,7 +187,7 @@ void Imagem::imprimirDados(){
 	cout << endl;
 	cout << "-------------------------------------- CABEÇALHO -----------------------------------------" << endl;
 	cout << endl;
-	cout << "Formato: " << getFormato() << "\t\t\t" << "Dimensão: " << getAltura() << " X " << getLargura() << "\t\t\t" 
+	cout << "Formato: " << getFormato() << "\t\t\t" << "Dimensão: " << getLargura() << " X " << getAltura() << "\t\t\t" 
 		<< "Escala Máxima: ";
 		printf("%d", getEscalaMaxima());
 	cout << endl;

@@ -7,11 +7,13 @@
 
 using namespace std;
 
+//método passado em sala de aula. Para verificação do valor inteiro.
 int MenuImagem::le_teclado_int() {       
 	string input = "";    
 	int valor;    
 	while (true) {         
-		cin >> input;       
+		//cin.ignore(256, '\n');
+		getline(cin, input);       
 		stringstream myStream(input);       
 		if (myStream >> valor)         
 			break;       
@@ -35,7 +37,7 @@ Filtro * MenuImagem::lerOpcaoFiltro(){
 	cout << endl;
 	cout << "----------------------------- ESCOLHA O FILTRO DESEJADO ----------------------------------" << endl;
 	cout << endl;
-	cout << "1 - Polarizado\t\t\t 2 - Negativo\t\t\t 3 - Preto e Branco" << endl;
+	cout << "1 - Polarizado\t\t 2 - Negativo\t\t 3 - Preto e Branco\t\t 4 - Média " << endl;
 	cout << endl;
 	cout << "------------------------------------------------------------------------------------------" << endl;
 	cout << "Digite a opção: ";
@@ -51,6 +53,9 @@ Filtro * MenuImagem::lerOpcaoFiltro(){
 			return filtro;
 		case 3 :
 			filtro = new FiltroPretoBranco();
+			return filtro;
+		case 4:
+			filtro = new FiltroDeMedia();
 			return filtro;
 	}
 

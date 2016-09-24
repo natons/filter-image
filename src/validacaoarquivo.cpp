@@ -12,7 +12,8 @@ string ValidacaoArquivo::validarArquivo(ifstream * arquivo){
 
 	cout << "Entre com o nome da imagem ou S para sair: ";
 	cout << flush;  
-	cin >> nomeImagem;
+	//cin.ignore(256, '\n');
+	getline(cin, nomeImagem);
 
 	if(nomeImagem[0] == 's' || nomeImagem[0] == 'S')
 		exit(0);
@@ -32,7 +33,7 @@ string ValidacaoArquivo::validarArquivo(ifstream * arquivo){
 			exit(0);
 
 		nomeImagem = validaEntradaNome(nomeImagem);
-		
+
 		diretorio = "doc/" + nomeImagem + ".ppm";
 		arquivo->open(diretorio.c_str());
 	}
@@ -70,15 +71,15 @@ void ValidacaoArquivo::validarNovoArquivo(ofstream * arquivo){
 	string nome;
 	cout << "Digite o nome da nova imagem: ";
 	cout << flush;
-	cin >> nome;
-
+	//cin.ignore(256, '\n');
+	getline(cin, nome);
 	nome = validaEntradaNome(nome);
 
 	string diretorio = "doc/" + nome + ".ppm";
 	arquivo->open(diretorio.c_str());
 	
 	if(arquivo->fail()){
-		cout << "Erro na abertura do arquivo!" << endl;
+		cout << "Erro na criação do arquivo!" << endl;
 		exit(0);
 	}
 }
