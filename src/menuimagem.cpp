@@ -22,8 +22,8 @@ int MenuImagem::le_teclado_int() {
 	return valor;
 }
 
-int MenuImagem::isOpcao(int opcao){
-	while(opcao < 1 || opcao > 4){
+int MenuImagem::isOpcao(int opcao, int menor, int maior){
+	while(opcao < menor || opcao > maior){
 		cout << "Opção Inválida. Digite novamente: ";
 		opcao = le_teclado_int();
 	}
@@ -42,7 +42,7 @@ Filtro * MenuImagem::lerOpcaoFiltro(){
 	cout << "------------------------------------------------------------------------------------------" << endl;
 	cout << "Digite a opção: ";
 	
-	opcao = isOpcao(le_teclado_int());
+	opcao = isOpcao(le_teclado_int(),1,4);
 
 	switch(opcao){
 		case 1 : 
@@ -55,9 +55,33 @@ Filtro * MenuImagem::lerOpcaoFiltro(){
 			filtro = new FiltroPretoBranco();
 			return filtro;
 		case 4:
-			filtro = new FiltroDeMedia();
+			FiltroDeMedia * media = new FiltroDeMedia();
+			media->setMascara(lerOpcaoMascara());
+			filtro = media;
 			return filtro;
 	}
 
 	return filtro;
+}
+
+int MenuImagem::lerOpcaoMascara(){
+	cout << "----------------------------- ESCOLHA A MÁSCARA DESEJADA ---------------------------------" << endl;
+	cout << endl;
+	cout << "1 - 3 x 3\t\t\t\t 2 - 5 x 5\t\t\t\t 3 - 7 x 7 " << endl;
+	cout << endl;
+	cout << "------------------------------------------------------------------------------------------" << endl;
+	cout << "Digite a opção: ";
+
+	int opcao = isOpcao(le_teclado_int(),1,3);
+
+	switch(opcao){
+		case 1 : 
+			return 3;
+		case 2 :
+			return 5;
+		case 3 :
+			return 7;
+	}
+
+	return opcao;
 }

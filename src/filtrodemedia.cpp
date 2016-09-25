@@ -1,114 +1,112 @@
 #include "filtrodemedia.hpp"
+#include "menuimagem.hpp"
+
+
+FiltroDeMedia::FiltroDeMedia(){
+	this->mascara = 3;
+}
+
+void FiltroDeMedia::setMascara(int mascara){
+	this->mascara = mascara;
+}
+
+int FiltroDeMedia::getMascara(){
+	return mascara;
+}
+
 
 list<Cor> FiltroDeMedia::aplicarFiltro(Imagem  * imagem){
 
-	list<Cor> cores;
-	/*
-	list<Cor>::iterator it = cores.begin(); 	
-	list<Cor>::iterator itAnterior;
-	Cor anterior;
+	int altura = imagem->getAltura();
+	int largura = imagem->getLargura();
 
-	long int cont, r=0,g=0,b=0;
-	for (Cor cor : imagem->getCores())
-	{
-		cont++;
+	//transformando list em matriz
+	Cor **rgb = getMatriz(altura,largura, imagem->getCores());
 
-		r += (long int)cor.getR();
-		g += (long int)cor.getG();
-		b += (long int)cor.getB();
-
-		if(cont == 5){
-			anterior = cor;
-			itAnterior = it;
-		}
-
-		if(cont == 9){
-			r /= 9;
-			g /= 9;
-			b /= 9;
-
-			anterior.setR((unsigned char) r);
-			anterior.setG((unsigned char) g);
-			anterior.setB((unsigned char) b);
-
-			cores.insert(itAnterior, anterior); 			
-			cores.erase(++itAnterior);
-
-			r = 0;
-			g = 0;
-			b = 0;
-			cont = 0;
-		}
-
-		++it;
-	}*/
-
-
-	
-	Cor rgb[imagem->getAltura()][imagem->getLargura()];
-
-	int linha=0,coluna=-1;
-	for(Cor cor : imagem->getCores()){
-
-		if(coluna < imagem->getLargura()){
-			coluna++;
-		} else {
-			linha++;
-			coluna = -1;
-		}
-		
-		rgb[linha][coluna] = cor;
-	}
-
-	int limit = 2;
-	double div = 25.0;
-	double r,g,b;
-	for(int i = limit; i < imagem->getAltura() - limit; ++i){
-	    for(int j = limit; j < imagem->getLargura() - limit; ++j) {
+	int limit = getMascara()/2;
+	int div = getMascara()*getMascara();
+	int r,g,b;
+	for(int i = limit; i < altura - limit; ++i){
+	    for(int j = limit; j < largura - limit; ++j) {
 	    	r = 0;
 	    	g = 0;
 	    	b = 0;
-		    	for (int k = -limit; k <= limit; ++k){
-		    		for (int n = -limit; n <= limit; ++n){
-		    			r += rgb[i+k][j+n].getR();
-		    			g += rgb[i+k][j+n].getG();
-		    			b += rgb[i+k][j+n].getB();
-		    			//cout << (int)rgb[i+k][j+n].getR() << " " << (int)rgb[i+k][j+n].getG() << " " << (int)rgb[i+k][j+n].getB() << "\t";
-		    		}
-		    		//cout << endl;
+		    for (int k = -limit; k <= limit; ++k){
+		    	for (int n = -limit; n <= limit; ++n){
+		    		r += rgb[i+k][j+n].getR();
+		    		g += rgb[i+k][j+n].getG();
+		    		b += rgb[i+k][j+n].getB();
 		    	}
+		    }
 
-		        r /= div;
+		    r /= div;
+	        g /= div;
+	        b /= div;
 
-		        g /= div;
-
-		        b /= div;
-
-		        //cout << r << " " << g << " " << b << endl;
-
-		        //cout << endl;
-
-		        rgb[i][j].setR((unsigned char)r);
-		        rgb[i][j].setG((unsigned char)g);
-		        rgb[i][j].setB((unsigned char)b);
-
+	        rgb[i][j].setR((unsigned char)r);
+	        rgb[i][j].setG((unsigned char)g);
+	        rgb[i][j].setB((unsigned char)b);
 	    }
 	}
 
-	linha=0;
-	coluna=-1;
-	for(Cor cor : imagem->getCores()){
+	list<Cor> cores = getList(rgb, largura, imagem->getCores());
 
-		if(coluna < imagem->getLargura()){
-			coluna++;
-		} else {
+	return cores;
+}
+
+Cor ** FiltroDeMedia::getMatriz(int altura, int largura, list<Cor> cores){
+
+	Cor** rgb = new Cor*[altura];
+
+	for(int i = 0; i < altura + 1; i++) {
+        rgb[i] = new Cor[largura];
+    }
+
+	int linha=0,coluna=0,naocontar=0;
+	//transformando list em matriz
+	for(Cor cor : cores){
+
+		rgb[linha][coluna] = cor;
+
+		if(coluna == largura-1){
+			naocontar = 1;
 			linha++;
-			coluna = -1;
 		}
+		
+		if(naocontar == 1){
+			coluna = -1;
+			naocontar = 0;
+		}
+
+		coluna++;	
+	}
+
+	return rgb;
+}
+
+list<Cor> FiltroDeMedia::getList(Cor** rgb, int largura, list<Cor> coresList){
+	list<Cor> cores;
+	int linha=0;
+	int coluna=0;
+	int naocontar=0;
+	for(Cor cor : coresList){
 
 		cor = rgb[linha][coluna];
 
 		cores.push_back(cor);
+
+		if(coluna == largura-1){
+			naocontar = 1;
+			linha++;
+		}
+		
+		if(naocontar == 1){
+			coluna = -1;
+			naocontar = 0;
+		}
+
+		coluna++;
 	}
+
 	return cores;
 }

@@ -7,11 +7,13 @@ class MenuImagem {
 
 private:
 	int le_teclado_int();
-	int isOpcao(int opcao);
+	int isOpcao(int opcao, int menor, int maior);
 
 public:
 
 	Filtro * lerOpcaoFiltro();
+
+	int lerOpcaoMascara();
 
 };
 
