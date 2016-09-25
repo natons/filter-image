@@ -2,7 +2,8 @@
 
 list<Cor> FiltroDeMedia::aplicarFiltro(Imagem  * imagem){
 
-	list<Cor> cores = imagem->getCores();
+	list<Cor> cores;
+	/*
 	list<Cor>::iterator it = cores.begin(); 	
 	list<Cor>::iterator itAnterior;
 	Cor anterior;
@@ -40,59 +41,74 @@ list<Cor> FiltroDeMedia::aplicarFiltro(Imagem  * imagem){
 		}
 
 		++it;
-	}
+	}*/
 
 
-
-	/*
+	
 	Cor rgb[imagem->getAltura()][imagem->getLargura()];
-	int i=0,j=-1;
+
+	int linha=0,coluna=-1;
 	for(Cor cor : imagem->getCores()){
 
-		if(j < imagem->getLargura()){
-			j++;
+		if(coluna < imagem->getLargura()){
+			coluna++;
 		} else {
-			i++;
-			j = -1;
+			linha++;
+			coluna = -1;
 		}
 		
-		rgb[i][j] = cor;
+		rgb[linha][coluna] = cor;
 	}
 
-	cout << imagem->getCores().size() << endl;
-
-	int limit = 1;
-	int r,g,b;
+	int limit = 2;
+	double div = 25.0;
+	double r,g,b;
 	for(int i = limit; i < imagem->getAltura() - limit; ++i){
 	    for(int j = limit; j < imagem->getLargura() - limit; ++j) {
 	    	r = 0;
 	    	g = 0;
 	    	b = 0;
+		    	for (int k = -limit; k <= limit; ++k){
+		    		for (int n = -limit; n <= limit; ++n){
+		    			r += rgb[i+k][j+n].getR();
+		    			g += rgb[i+k][j+n].getG();
+		    			b += rgb[i+k][j+n].getB();
+		    			//cout << (int)rgb[i+k][j+n].getR() << " " << (int)rgb[i+k][j+n].getG() << " " << (int)rgb[i+k][j+n].getB() << "\t";
+		    		}
+		    		//cout << endl;
+		    	}
 
-	    	for (int k = -1; k <= 1; ++k){
-	    		for (int n = -1; n <= 1; ++n){
-	    			r += rgb[i+k][j+n].getR();
-	    			g += rgb[i+k][j+n].getG();
-	    			b += rgb[i+k][j+n].getB();
-	    		}
-	    	}
+		        r /= div;
 
-	        r /= 9;
+		        g /= div;
 
-	        g /= 9;
+		        b /= div;
 
-	        b /= 9;
+		        //cout << r << " " << g << " " << b << endl;
 
-	        rgb[i][j].setR((unsigned char)r);
-	        rgb[i][j].setG((unsigned char)g);
-	        rgb[i][j].setB((unsigned char)b);
-	        
+		        //cout << endl;
+
+		        rgb[i][j].setR((unsigned char)r);
+		        rgb[i][j].setG((unsigned char)g);
+		        rgb[i][j].setB((unsigned char)b);
+
 	    }
 	}
 
-	for(int i = 0; i < imagem->getAltura(); ++i)
-	    for(int j = 0; j < imagem->getLargura(); ++j) 
-	    	cores.push_back(rgb[i][j]);*/
+	linha=0;
+	coluna=-1;
+	for(Cor cor : imagem->getCores()){
 
+		if(coluna < imagem->getLargura()){
+			coluna++;
+		} else {
+			linha++;
+			coluna = -1;
+		}
+
+		cor = rgb[linha][coluna];
+
+		cores.push_back(cor);
+	}
 	return cores;
 }

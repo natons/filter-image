@@ -33,7 +33,7 @@ int MenuImagem::isOpcao(int opcao){
 
 Filtro * MenuImagem::lerOpcaoFiltro(){
 	int opcao;
-	Filtro * filtro;
+	Filtro * filtro = new Filtro();
 	cout << endl;
 	cout << "----------------------------- ESCOLHA O FILTRO DESEJADO ----------------------------------" << endl;
 	cout << endl;
