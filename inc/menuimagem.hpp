@@ -2,18 +2,21 @@
 #define MENUIMAGEM_HPP
 #include "filtro.hpp"
 #include <iostream>
+#include <string>
+
+using namespace std;
 
 class MenuImagem {
-
-private:
-	int le_teclado_int();
-	int isOpcao(int opcao, int menor, int maior);
 
 public:
 
 	Filtro * lerOpcaoFiltro();
 
 	int lerOpcaoMascara();
+
+	string lerNomeImagem();
+
+	void mensagem(string mensagem);
 
 };
 

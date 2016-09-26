@@ -18,12 +18,15 @@ private:
 		int largura;
 		unsigned char escalaMaxima;
 		string urlEndereco;
+		int tamanhoCabecalho;
 		list<Cor> cores;
 
 public:
 		Imagem();
 
-		Imagem(string formato, int altura, int largura, unsigned char escalaMaxima, list<Cor> cores);
+		Imagem(string formato, int altura, int largura, unsigned char escalaMaxima, string urlEndereco, int tamanhoCabecalho, list<Cor> cores);
+
+		Imagem(string formato, int altura, int largura, unsigned char escalaMaxima, int tamanhoCabecalho);
 		
 		string getFormato();
 
@@ -45,17 +48,22 @@ public:
 
 		string getUrlEndereco();
 
+		int getTamanhoCabecalho();
+
+		void setTamanhoCabecalho(int tamanhoCabecalho);
+
 		list<Cor> getCores();
 		
 		void setCores(list<Cor> cores);
 
+
+
+
 		int lerCabecalho();
 
-		int getTamanhoCabecalho();
+		list<Cor> lerCores();
 
-		list<Cor> lerCores(ifstream * arquivo);
-
-		void lerImagem();
+		void lerImagem(string nomeImagem);
 
 		void gravarImagem();
 

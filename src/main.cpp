@@ -16,19 +16,25 @@ using namespace std;
 
 int main(){
 
-	Imagem *imagem = new Imagem();
-
-	imagem->lerImagem();
-	
-	imagem->imprimirDados();
-
 	MenuImagem menu;
+	string nomeImagem;
+	do{
 
-	Filtro * filtro = menu.lerOpcaoFiltro();
+		nomeImagem = menu.lerNomeImagem();
+
+		Imagem *imagem = new Imagem();
 	
-	imagem->setCores(filtro->aplicarFiltro(imagem));
+		imagem->lerImagem(nomeImagem);
+		
+		imagem->imprimirDados();
+	
+		Filtro * filtro = menu.lerOpcaoFiltro();
+		
+		imagem->setCores(filtro->aplicarFiltro(imagem));
+	
+		imagem->gravarImagem();
 
-	imagem->gravarImagem();
+	} while(nomeImagem != "Sair" && nomeImagem != "sair");
 	
 	return 0;
 }

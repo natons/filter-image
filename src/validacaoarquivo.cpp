@@ -4,31 +4,33 @@
 #include <stdlib.h>
 #include <algorithm>
 #include "validacaoarquivo.hpp"
+#include <limits>
 
 using namespace std;
 
-string ValidacaoArquivo::validarArquivo(ifstream * arquivo){
-	string nomeImagem;
-
-	cout << "Entre com o nome da imagem ou S para sair: ";
-	cout << flush;  
-	//cin.ignore(256, '\n');
-	getline(cin, nomeImagem);
-
-	if(nomeImagem[0] == 's' || nomeImagem[0] == 'S')
-		exit(0);
-
-	nomeImagem = validaEntradaNome(nomeImagem);
-
-	string diretorio = "doc/" + nomeImagem + ".ppm";
+string ValidacaoArquivo::validarArquivo(ifstream * arquivo, string nomeImagem){
+	
+	string diretorio;
+	arquivo->exceptions( ifstream::failbit | ifstream::badbit );
 	try {
-		arquivo->open(diretorio.c_str());
 
-		while(arquivo->fail()){
+		if(nomeImagem[0] == 's' || nomeImagem[0] == 'S')
+			exit(0);
+
+		nomeImagem = validaEntradaNome(nomeImagem);
+
+		diretorio = "doc/" + nomeImagem + ".ppm";
+	
+		
+		arquivo->open(diretorio.c_str(),ios_base::binary);
+
+	} catch (ifstream::failure e) {
+
+    	while(arquivo->fail()){
 			cout << "Erro na abertura do arquivo! Verifique o nome" << endl;
 			cout << "Digite o nome novamente ou S para sair: ";
 			cout << flush;  
-			cin >> nomeImagem;
+			getline(cin, nomeImagem);
 
 			if(nomeImagem[0] == 's' || nomeImagem[0] == 'S')
 				exit(0);
@@ -38,8 +40,6 @@ string ValidacaoArquivo::validarArquivo(ifstream * arquivo){
 			diretorio = "doc/" + nomeImagem + ".ppm";
 			arquivo->open(diretorio.c_str());
 		}
-	} catch (ifstream::failure e) {
-    	cerr << "Exception opening/reading/closing file\n";
   	}
 
 	return diretorio;
@@ -65,7 +65,11 @@ string ValidacaoArquivo::validaEntradaNome(string nomeImagem){
 	else if(extensao[0] == '.'){
 		cout << endl;
 		cout << "ERRO! Imagem com extensão inválida" << endl;
-		exit(1);
+		cout << "Entre com o nome da imagem ou S para sair: ";
+		cout << flush;
+		//cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		getline(cin, nomeImagem);
+		nomeImagem = validaEntradaNome(nomeImagem);
 	}
 	return nomeImagem;
 }
@@ -73,19 +77,22 @@ string ValidacaoArquivo::validaEntradaNome(string nomeImagem){
 void ValidacaoArquivo::validarNovoArquivo(ofstream * arquivo){
 
 	string nome;
-	cout << "Digite o nome da nova imagem: ";
-	cout << flush;
-	//cin.ignore(256, '\n');
-	getline(cin, nome);
-	nome = validaEntradaNome(nome);
-	nome = existeArquivo(nome);
+	arquivo->exceptions( ifstream::failbit | ifstream::badbit );
+	try {
+		cout << "Digite o nome da nova imagem: ";
+		cout << flush;
+		//cin.ignore(256, '\n');
+		//cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		getline(cin, nome);
+		nome = validaEntradaNome(nome);
+		nome = existeArquivo(nome);
+		
+		string diretorio = "doc/" + nome + ".ppm";
+		arquivo->open(diretorio.c_str());
 
-	string diretorio = "doc/" + nome + ".ppm";
-	arquivo->open(diretorio.c_str());
-	
-	if(arquivo->fail()){
-		cout << "Erro na criação do arquivo!" << endl;
-		exit(0);
+
+	} catch (ofstream::failure e){
+			cout << "Erro na criação do arquivo!" << endl;
 	}
 }
 
@@ -115,14 +122,20 @@ void ValidacaoArquivo::ignorarComentario(ifstream * arquivo){
 
 string ValidacaoArquivo::existeArquivo(string nome){
 	ifstream * is = new ifstream();
-	is->open("doc/"+nome+".ppm",ios_base::in);
-
-	while(is->is_open()){
-		is->close();
-		cout << "Já existe um arquivo com este nome! Digite novamente: ";
-		getline(cin, nome);
-		nome = validaEntradaNome(nome);
-		is->open("doc/"+nome+".ppm",ios_base::in);
+	is->exceptions( ifstream::failbit | ifstream::badbit );
+	try {
+		
+		is->open("doc/"+nome+".ppm",ios_base::in | ios_base::binary);
+		while(is->is_open()){
+			is->close();
+			cout << "Já existe um arquivo com este nome! Digite novamente: ";
+			//cin.ignore(numeric_limits<streamsize>::max(), '\n');
+			getline(cin, nome);
+			nome = validaEntradaNome(nome);
+			is->open("doc/"+nome+".ppm",ios_base::in | ios_base::binary);
+		}
+	} catch(ifstream::failure e){
+		return nome;
 	}
 
 	return nome;

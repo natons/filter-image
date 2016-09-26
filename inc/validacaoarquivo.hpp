@@ -10,7 +10,7 @@ class ValidacaoArquivo {
 
 public:
 
-		string validarArquivo(ifstream * arquivo);
+		string validarArquivo(ifstream * arquivo,string nomeImagem);
 
 		string validaEntradaNome(string nomeImagem);
 

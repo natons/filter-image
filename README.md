@@ -8,6 +8,7 @@ Este projeto consiste em um programa em C++ capaz de aplicar filtros em imagens 
 * 4 - Salve o conteúdo em outro arquivo
 
 * Mais detalhes na wiki [home](https://gitlab.com/OOFGA-2016-1/EP1/wikis/home)
+
 ### Como Compilar e Executar
 
 Para compilar e executar o programa em um sistema operacional Linux, siga as seguintes instruções:
@@ -24,8 +25,8 @@ Para compilar e executar o programa em um sistema operacional Linux, siga as seg
 
 ### Entradas do usuário
 
-As entradas referentes aos nomes da imagem, podem ser acompanhadas de suas extensões ou não. Fica a cargo do usuário. Entretanto não se deve ser inserido o diretório da imagem, pois este foi definido de forma padrão, logo abaixo.
+As entradas referentes aos nomes das imagems (imagem para leitura e imagem para escrita), podem ou não serem acompanhadas de suas extensões. Fica a cargo do usuário. Entretanto não deve ser inserido o diretório da imagem (tanto na entrada quanto na saída), pois este foi definido de forma padrão, logo abaixo.
 
-### Onde devem se localizar os arquivos de imagem
+### Onde se localiza as imagens para leitura e escrita
 
 Para o funcionamento correto do software é necessário que as imagens .ppm estejam localizadas na pasta "doc/", bem como a criação da nova imagem também estará armazenada neste diretório.

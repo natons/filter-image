@@ -3,37 +3,14 @@
 #include "filtropolarizado.hpp"
 #include "filtropretobranco.hpp"
 #include "filtrodemedia.hpp"
-#include <sstream>
+#include "validacaomenu.hpp"
+#include <stdlib.h>
+#include <stdio.h>
 
 using namespace std;
 
-//método passado em sala de aula. Para verificação do valor inteiro.
-int MenuImagem::le_teclado_int() {       
-	string input = "";    
-	int valor;    
-	while (true) {         
-		//cin.ignore(256, '\n');
-		getline(cin, input);       
-		stringstream myStream(input);       
-		if (myStream >> valor)         
-			break;       
-		cout << "Inteiro inválido! Digite novamente: ";     
-	}     
-	return valor;
-}
-
-int MenuImagem::isOpcao(int opcao, int menor, int maior){
-	while(opcao < menor || opcao > maior){
-		cout << "Opção Inválida. Digite novamente: ";
-		opcao = le_teclado_int();
-	}
-
-	return opcao;
-}
-
 Filtro * MenuImagem::lerOpcaoFiltro(){
-	int opcao;
-	Filtro * filtro = new Filtro();
+	
 	cout << endl;
 	cout << "----------------------------- ESCOLHA O FILTRO DESEJADO ----------------------------------" << endl;
 	cout << endl;
@@ -41,8 +18,12 @@ Filtro * MenuImagem::lerOpcaoFiltro(){
 	cout << endl;
 	cout << "------------------------------------------------------------------------------------------" << endl;
 	cout << "Digite a opção: ";
-	
-	opcao = isOpcao(le_teclado_int(),1,4);
+
+	ValidacaoMenu validacao;
+	int opcao = validacao.validarOpcao(validacao.validarInteiro(),1,4);
+
+
+	Filtro * filtro = new Filtro();
 
 	switch(opcao){
 		case 1 : 
@@ -72,7 +53,8 @@ int MenuImagem::lerOpcaoMascara(){
 	cout << "------------------------------------------------------------------------------------------" << endl;
 	cout << "Digite a opção: ";
 
-	int opcao = isOpcao(le_teclado_int(),1,3);
+	ValidacaoMenu validacao;
+	int opcao = validacao.validarOpcao(validacao.validarInteiro(),1,3);
 
 	switch(opcao){
 		case 1 : 
@@ -84,4 +66,29 @@ int MenuImagem::lerOpcaoMascara(){
 	}
 
 	return opcao;
+}
+
+string MenuImagem::lerNomeImagem(){
+
+
+	#ifdef WIN32
+		system ("cls");
+	#endif
+
+	#ifndef WIN32
+		system("clear"); 
+	#endif
+
+	string nomeImagem;
+	cout << "Digite o nome da imagem ou Sair para sair do programa: ";
+	getline(cin,nomeImagem);
+
+	return nomeImagem;
+}
+
+void MenuImagem::mensagem(string mensagem){
+	cout << endl;
+	cout << "\t\t\t\t" << mensagem << endl << endl;
+	cout << "\t\t\t\tPressione ENTER para continuar" << endl;
+	getchar();
 }

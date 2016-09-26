@@ -1,6 +1,7 @@
 #include "imagem.hpp"
 #include "cor.hpp"
 #include <sstream>
+#include "menuimagem.hpp"
 
 using namespace std;
 
@@ -8,12 +9,22 @@ Imagem::Imagem(){
 
 }
 
-Imagem::Imagem(string formato, int altura, int largura, unsigned char escalaMaxima, list<Cor> cores){
+Imagem::Imagem(string formato, int altura, int largura, unsigned char escalaMaxima, string urlEndereco, int tamanhoCabecalho, list<Cor> cores){
 	this->formato = formato;
 	this->altura = altura;
 	this->largura = largura;
 	this->escalaMaxima = escalaMaxima;
+	this->urlEndereco = urlEndereco;
+	this->tamanhoCabecalho = tamanhoCabecalho;
 	this->cores = cores;
+}
+
+Imagem::Imagem(string formato, int altura, int largura, unsigned char escalaMaxima, int tamanhoCabecalho){
+	this->formato = formato;
+	this->altura = altura;
+	this->largura = largura;
+	this->escalaMaxima = escalaMaxima;
+	this->tamanhoCabecalho = tamanhoCabecalho;
 }
 
 string Imagem::getFormato(){
@@ -56,6 +67,14 @@ string Imagem::getUrlEndereco(){
 	return urlEndereco;
 }
 
+int Imagem::getTamanhoCabecalho(){
+	return tamanhoCabecalho;
+}
+
+void Imagem::setTamanhoCabecalho(int tamanhoCabecalho){
+	this->tamanhoCabecalho = tamanhoCabecalho;
+}
+
 list<Cor> Imagem::getCores(){
 	return cores;
 }
@@ -64,91 +83,90 @@ void Imagem::setCores(list<Cor> cores){
 	this->cores = cores;
 }
 
-void Imagem::lerImagem(){
+void Imagem::lerImagem(string nomeImagem){
 
 	ifstream arquivo;
 
 	ValidacaoArquivo va;
 
-	setUrlEndereco(va.validarArquivo(&arquivo));
+	setUrlEndereco(va.validarArquivo(&arquivo,nomeImagem));
 
-	arquivo.seekg(lerCabecalho(),ios_base::cur);
+	lerCabecalho();
 
-	setCores(lerCores(&arquivo));
+	setCores(lerCores());
+
 	arquivo.close();
 }
 
 int Imagem::lerCabecalho(){
 
 	ifstream arquivo;
-	arquivo.open(getUrlEndereco().c_str());
-	ValidacaoArquivo va;
-	va.ignorarComentario(&arquivo);
+	arquivo.exceptions( ifstream::badbit );
+	int posicao;
+	try{
+		arquivo.open(getUrlEndereco().c_str(), ios_base::binary);
 
-	setFormato(getDado(&arquivo));
+		ValidacaoArquivo va;
+		va.ignorarComentario(&arquivo);
 
-	va.ignorarComentario(&arquivo);
+		string formato = getDado(&arquivo);
 
-	int altura, largura;
-	istringstream * iss = new istringstream();
-	iss->str(getDado(&arquivo));
-	(*iss) >> largura >> altura;
-	setAltura(altura);
-	setLargura(largura);
+		va.ignorarComentario(&arquivo);
 
-	va.ignorarComentario(&arquivo);
+		int altura, largura;
+		istringstream * iss = new istringstream();
+		iss->str(getDado(&arquivo));
+		(*iss) >> largura >> altura;
+
+		va.ignorarComentario(&arquivo);
+		
+		int escala;
+		iss = new istringstream();
+		iss->str(getDado(&arquivo));
+		(*iss) >> escala;
+
+		va.ignorarComentario(&arquivo);
+		posicao = arquivo.tellg();
+
+		arquivo.close();
+
+		//setando atributos
+		//Imagem(formato,altura,largura,(unsigned char)escala,posicao);
+		setFormato(formato);setAltura(altura);setLargura(largura);setEscalaMaxima(escala);setTamanhoCabecalho(posicao);
+
+	}catch(ifstream::failure e){
+		cerr << "Erro na leitura do arquivo em lerCabecalho" << getUrlEndereco() << endl;
+	}
 	
-	int escala;
-	iss = new istringstream();
-	iss->str(getDado(&arquivo));
-	(*iss) >> escala;
-	setEscalaMaxima(escala);
-
-	va.ignorarComentario(&arquivo);
-	int posicao = arquivo.tellg();
-
-	arquivo.close();
 	return posicao;
 }
 
-int Imagem::getTamanhoCabecalho(){
+list<Cor> Imagem::lerCores(){
 
 	ifstream arquivo;
-	arquivo.open(getUrlEndereco().c_str());
-	ValidacaoArquivo va;
-	va.ignorarComentario(&arquivo);
-
-	getDado(&arquivo);
-
-	va.ignorarComentario(&arquivo);
-	
-	getDado(&arquivo);
-
-	va.ignorarComentario(&arquivo);
-	
-	getDado(&arquivo);
-
-	va.ignorarComentario(&arquivo);
-	
-	int tam = arquivo.tellg();
-
-	arquivo.close();
-
-	return tam - 1;
-}
-
-list<Cor> Imagem::lerCores(ifstream * arquivo){
-	Cor cor;
+	arquivo.exceptions( ifstream::badbit );
 	list<Cor> cores;
-	while(!arquivo->eof()){
-		unsigned char dado = arquivo->get();
-		cor.setR(dado);
-		dado = arquivo->get();
-		cor.setG(dado);
-		dado = arquivo->get();
-		cor.setB(dado);
+	try {
+		arquivo.open(getUrlEndereco().c_str(), ios_base::binary);
+		arquivo.seekg(getTamanhoCabecalho()+1,arquivo.beg);
 
-		cores.push_back(cor);
+		Cor cor;
+		while(!arquivo.eof()){
+			unsigned char dado = arquivo.get();
+			cor.setR(dado);
+			dado = arquivo.get();
+			cor.setG(dado);
+			dado = arquivo.get();
+			cor.setB(dado);
+
+			cores.push_back(cor);
+		}
+
+		arquivo.close();
+
+
+	} catch(ifstream::failure e){
+		cerr << "Erro na leitura do arquivo em lerCores" << getUrlEndereco() << endl;
 	}
 
 	return cores;
@@ -156,31 +174,51 @@ list<Cor> Imagem::lerCores(ifstream * arquivo){
 
 void Imagem::gravarImagem(){
 
+	ifstream arquivo;
+	arquivo.exceptions( ifstream::badbit );
+
 	ofstream arquivoImagem;
 	ValidacaoArquivo va;
 	va.validarNovoArquivo(&arquivoImagem);
 
 	int tam = getTamanhoCabecalho();
-	ifstream arquivo;
-	arquivo.open(getUrlEndereco().c_str());
-	while(arquivo.tellg() <= tam)
-		arquivoImagem.put((unsigned char) arquivo.get());
-	arquivo.close();
-	
-	for(Cor cor : getCores()){
+
+	try{
 		
-		arquivoImagem.put(cor.getR());
+		arquivo.open(getUrlEndereco().c_str());
+
+		while(arquivo.tellg() <= tam)
+			arquivoImagem.put((unsigned char) arquivo.get());
+		arquivo.close();
 		
-		arquivoImagem.put(cor.getG());
+		for(Cor cor : getCores()){
+			
+			arquivoImagem.put(cor.getR());
+			
+			arquivoImagem.put(cor.getG());
+			
+			arquivoImagem.put(cor.getB());
+			
+		}
 		
-		arquivoImagem.put(cor.getB());
-		
+		arquivoImagem.close();
+		MenuImagem menu;
+		string mensagem = "Nova imagem criada com sucesso!";
+		menu.mensagem(mensagem);
+
+	} catch(ifstream::failure e){
+		cerr << "Erro na abertura/leitura do arquivo em gravarImagem" << getUrlEndereco() << endl;
 	}
-	
-	arquivoImagem.close();
-	cout << endl;
-	cout << "\t\t\tNova imagem criada com sucesso! " << endl;
-	cout << endl;
+}
+
+string Imagem::getDado(ifstream * arquivo){
+	unsigned char byte;
+	string dado;
+	while((byte=arquivo->get()) != '\n'){
+		dado += byte;
+	}
+
+	return dado;
 }
 
 void Imagem::imprimirDados(){
@@ -194,14 +232,4 @@ void Imagem::imprimirDados(){
 	cout << endl;
 	cout << "------------------------------------------------------------------------------------------" << endl;
 	cout << endl;
-}
-
-string Imagem::getDado(ifstream * arquivo){
-	unsigned char byte;
-	string dado;
-	while((byte=arquivo->get()) != '\n'){
-		dado += byte;
-	}
-
-	return dado;
 }
