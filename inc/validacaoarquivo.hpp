@@ -17,7 +17,8 @@ public:
 		void validarNovoArquivo(ofstream * arquivo);
 
 		void ignorarComentario(ifstream * arquivo);
-
+		
+		string existeArquivo(string nome);
 };
 
 #endif

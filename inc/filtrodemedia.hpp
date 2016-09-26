@@ -12,7 +12,7 @@ class FiltroDeMedia : public Filtro{
 private:
 	int mascara;
 public:
-	FiltroDeMedia::FiltroDeMedia();
+	FiltroDeMedia();
 	void setMascara(int mascara);
 	int getMascara();
 

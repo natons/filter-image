@@ -1,6 +1,4 @@
 #include "filtrodemedia.hpp"
-#include "menuimagem.hpp"
-
 
 FiltroDeMedia::FiltroDeMedia(){
 	this->mascara = 3;
@@ -27,7 +25,7 @@ list<Cor> FiltroDeMedia::aplicarFiltro(Imagem  * imagem){
 	int div = getMascara()*getMascara();
 	int r,g,b;
 	for(int i = limit; i < altura - limit; ++i){
-	    for(int j = limit; j < largura - limit; ++j) {
+	    for(int j = limit; j < largura - limit; ++j){
 	    	r = 0;
 	    	g = 0;
 	    	b = 0;
