@@ -4,7 +4,8 @@ Este projeto consiste em um programa em C++ capaz de aplicar filtros em imagens 
 
 * 1 - Abra a imagem no formato PPM
 * 2 - Leia o conteúdo da imagem
-* 3 - Salve o conteúdo em outro arquivo
+* 3 - Aplique o filtro na imagem
+* 4 - Salve o conteúdo em outro arquivo
 
 * Mais detalhes na wiki [home](https://gitlab.com/OOFGA-2016-1/EP1/wikis/home)
 ### Como Compilar e Executar
